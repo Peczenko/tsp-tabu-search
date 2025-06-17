@@ -1,6 +1,4 @@
-instance_file    = "tsp_50.csv"
-final_tour_file  = "tsp_50_tour.csv"
-
+import argparse
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -26,14 +24,25 @@ def plot_tour(coords, tour, title):
     plt.plot(pts[:, 0], pts[:, 1], marker="o")
     plt.title(title)
     plt.gca().set_aspect("equal", adjustable="box")
-    plt.xlabel("x"); plt.ylabel("y"); plt.tight_layout()
+    plt.xlabel("x")
+    plt.ylabel("y")
+    plt.tight_layout()
 
-coords = np.loadtxt(instance_file, delimiter=",")
-tour_final = np.loadtxt(final_tour_file, delimiter=",", dtype=int).tolist()
+def main():
+    parser = argparse.ArgumentParser(description="Plot TSP tours (initial and final)")
+    parser.add_argument("--instance", required=True, help="CSV file with coordinates (x,y)")
+    parser.add_argument("--tour", required=True, help="CSV file with best tour (list of city indices)")
+    args = parser.parse_args()
 
-dist = distance_matrix(coords)
-tour_init = nearest_neighbor(dist)
+    coords = np.loadtxt(args.instance, delimiter=",")
+    tour_final = np.loadtxt(args.tour, delimiter=",", dtype=int).tolist()
 
-plot_tour(coords, tour_init,  "Initial Tour – Nearest Neighbour")
-plot_tour(coords, tour_final, "Final Tour – Tabu Search Best")
-plt.show()
+    dist = distance_matrix(coords)
+    tour_init = nearest_neighbor(dist)
+
+    plot_tour(coords, tour_init,  "Initial Tour – Nearest Neighbour")
+    plot_tour(coords, tour_final, "Final Tour – Tabu Search Best")
+    plt.show()
+
+if __name__ == "__main__":
+    main()
